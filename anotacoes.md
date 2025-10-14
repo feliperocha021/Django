@@ -61,3 +61,48 @@ Configurar as rotas globais do projeto
 
 Testar funcionamento: http://localhost:8000/api/v1/courses
 http://localhost:8000/api/v1/evaluations
+
+# Relações
+
+ForeignKey -> cria uma relação muitos-para-um.
+
+OneToOneField -> cria uma relação um-para-um.
+
+ManyToManyField -> cria uma relação N-N.
+
+# Paginação
+
+O **Django REST Framework (DRF)** oferece suporte nativo à paginação de resultados.  
+Existem duas formas principais de configurar: **global** e **local**.
+
+## 🔹 Paginação Global
+Definida no `settings.py`, afeta **toda a API**.
+
+*settings.py*
+``` bash
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,   # número de itens por página
+}
+```
+
+É simples e consistente em toda a API, porém menos flexível se endpoints diferentes precisarem de paginações distintas
+
+## Paginação Local
+Definida diretamente em um **ViewSet** ou **APIView**. Sobrescreve a configuração global apenas para aquele recurso.
+
+from rest_framework.pagination import PageNumberPagination
+
+``` bash
+class CoursePagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'  # permite o cliente escolher
+    max_page_size = 50
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    pagination_class = CoursePagination
+```
+
+É flexível, cada recurso pode ter sua própria paginação, porém mais código para manter

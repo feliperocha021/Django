@@ -16,6 +16,7 @@ class Course(Base):
   class Meta:
     verbose_name = 'Course'
     verbose_name_plural = "Courses"
+    ordering = ['-creation']
 
   def __str__(self):
     return self.title
@@ -35,6 +36,7 @@ class Evaluation(Base):
     constraints = [
         models.UniqueConstraint(fields=['email', 'course'], name='unique_evaluation_per_course')
     ]
+    ordering = ['-creation']
   
   def __str__(self):
     return f'{self.name} grade the course {self.course} with a grade {self.grade}'
